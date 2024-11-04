@@ -60,7 +60,7 @@ object luz {
 class Heroe {
     const fuerza
     var pm
-    var property espada
+    var espada
 
     method pm() = pm
 
@@ -79,6 +79,14 @@ class Heroe {
     }
 
     method puedeLanzarHechizo(hechizo) = pm >= hechizo.poderBase()
+
+    method descansar() {
+        pm = 30.max(pm)
+    }
+
+    method equiparLlaveEspada(nuevaEspada) {
+        espada = nuevaEspada
+    }
 }
 
 class LlaveEspada {

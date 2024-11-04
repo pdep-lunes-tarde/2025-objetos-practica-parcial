@@ -62,9 +62,21 @@ describe "Héroes" {
 		assert.equals(mickey.pm(), 13)
 	}
 
+	test "Si un héroe descansa, sus PM crecen hasta 30" {
+		mickey.descansar()
+		assert.equals(mickey.pm(), 30)
+		assert.that(mickey.puedeLanzarHechizo(ragnarok))
+	}
+
+	test  "Si un héroe con más de 30 PM descansa, conserva sus PM" {
+		const gandalf = new Heroe(fuerza = 1, pm = 50, espada = llaveDelReino)
+		gandalf.descansar()
+		assert.equals(gandalf.pm(), 50)
+	}
+
 	test "Al cambiar de espada, los héroes causan daño distinto" {
 		const examinadora = new LlaveEspada(poderFisico = 1, poderMagico = 10)
-		sora.espada(examinadora)
+		sora.equiparLlaveEspada(examinadora)
 		sora.lanzarHechizo(piro, rapsodiaAzul)
 		assert.equals(rapsodiaAzul.pv(), 0)
 	}
