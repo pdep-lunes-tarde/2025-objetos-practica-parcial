@@ -10,6 +10,12 @@ describe "Enemigos y ataques" {
 		assert.equals(umbrio.pv(), 40)
 	}
 
+	test "Un ataque físico causa siempre, al menos, 1 de daño" {
+		const ataqueFisico = new AtaqueFisico(potencia = 2)
+		umbrio.recibirAtaque(ataqueFisico)
+		assert.equals(umbrio.pv(), 49)
+	}
+
 	test "Un sincorazón recibe daño físico igual al 90% de la potencia del ataque" {
 		const ataqueFisico = new AtaqueFisico(potencia = 10)
 		nocturnoRojo.recibirAtaque(ataqueFisico)
