@@ -1,5 +1,37 @@
 import tp.*
 
-test "Test de ejemplo" {
-		assert.equals(4, 2 + 2)
+const umbrio = new Incorporeo(defensa = 10, pv = 50, elemento = oscuridad)
+const nocturnoRojo = new Sincorazon(pv = 80, elemento = fuego)
+
+describe "Enemigos y ataques" {
+	test "Un incorpóreo recibe daño físico igual a la diferencia entre la potencia del ataque y la defensa del enemigo" {
+		const ataqueFisico = new AtaqueFisico(potencia = 20)
+		umbrio.recibirAtaque(ataqueFisico)
+		assert.equals(umbrio.pv(), 40)
+	}
+
+	test "Un sincorazón recibe daño físico igual al 90% de la potencia del ataque" {
+		const ataqueFisico = new AtaqueFisico(potencia = 10)
+		nocturnoRojo.recibirAtaque(ataqueFisico)
+		assert.equals(nocturnoRojo.pv(), 71)
+	}
+
+	test "Un enemigo no recibe daño de un ataque mágico de su mismo elemento " {
+		const ataqueMagico = new AtaqueMagico(potencia = 100, elemento = fuego)
+		const vidaOriginal = nocturnoRojo.pv()
+		nocturnoRojo.recibirAtaque(ataqueMagico)
+		assert.equals(nocturnoRojo.pv(), vidaOriginal)
+	}
+
+	test "Al ser atacado por un ataque mágico de un elemento neutral, un enemigo recibde daño igual a su potencia" {
+		const ataqueMagico = new AtaqueMagico(potencia = 50, elemento = luz)
+		nocturnoRojo.recibirAtaque(ataqueMagico)
+		assert.equals(nocturnoRojo.pv(), 30)
+	}
+
+	test "Al ser atacado por un ataque mágico eficaz, un enemigo recibde daño igual al doble de su potencia" {
+		const ataqueMagico = new AtaqueMagico(potencia = 10, elemento = luz)
+		umbrio.recibirAtaque(ataqueMagico)
+		assert.equals(umbrio.pv(), 30)
+	}
 }
