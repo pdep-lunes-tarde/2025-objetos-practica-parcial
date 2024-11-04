@@ -6,9 +6,9 @@ https://docs.google.com/document/d/e/2PACX-1vT7Zid45W_xiJtqafv3z9Vo7XRWS46XPT8T3
 
 ## Estudiante
 
-**Nombre y apellido:** -completar acá-
+**Nombre y apellido:** Manuel Rafael
 
-**Número de legajo:** -completar acá-
+**Número de legajo:** 214.044-5
 
 ## Tiempo del parcial
 
