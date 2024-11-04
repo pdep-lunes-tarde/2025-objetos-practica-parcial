@@ -1,8 +1,12 @@
 import tp.*
 
-const umbrio = new Incorporeo(defensa = 10, pv = 50, elemento = oscuridad)
-const nocturnoRojo = new Sincorazon(pv = 80, elemento = fuego)
-const rapsodiaAzul = new Sincorazon(pv = 80, elemento = hielo)
+class Umbrio inherits Incorporeo(defensa = 10, pv = 50, elemento = oscuridad) {}
+class NocturnoRojo inherits Sincorazon(pv = 80, elemento = fuego) {}
+class RapsodiaAzul inherits Sincorazon(pv = 80, elemento = hielo) {}
+
+const umbrio = new Umbrio()
+const nocturnoRojo = new NocturnoRojo()
+const rapsodiaAzul = new RapsodiaAzul()
 
 describe "Enemigos y ataques" {
 	test "Un incorpóreo recibe daño físico igual a la diferencia entre la potencia del ataque y la defensa del enemigo" {
@@ -79,5 +83,49 @@ describe "Héroes" {
 		sora.equiparLlaveEspada(examinadora)
 		sora.lanzarHechizo(piro, rapsodiaAzul)
 		assert.equals(rapsodiaAzul.pv(), 0)
+	}
+}
+
+
+describe "Equipos" {
+  	test "Un equipo necesita frenar si alguno de sus miembros tiene 0 PM" {
+		const srCansado = new Heroe(fuerza = 10, pm = 0, espada = brisaDescarada)
+		const equipo = new Equipo(miembros = [sora, mickey, riku, srCansado])
+		assert.that(equipo.necesitanFrenar())
+		srCansado.descansar()
+		assert.notThat(equipo.necesitanFrenar())
+  	}
+
+	test "Al emboscar a un monstruo, cada miembro del equipo le realiza un ataque físico" {
+		const equipo = new Equipo(miembros = [sora, mickey, riku])
+		const otroNocturno = new NocturnoRojo()
+		sora.atacar(otroNocturno)
+		mickey.atacar(otroNocturno)
+		riku.atacar(otroNocturno)
+
+		equipo.emboscar(nocturnoRojo)
+		assert.equals(nocturnoRojo.pv(), otroNocturno.pv())
+	}
+
+	test "A ciertos miembros del equipo les conviene cambiar de espada si hacerlo aumentaría la potencia de sus ataques físicos" {
+		const equipo = new Equipo(miembros = [sora, mickey, riku])
+		const aQuienesLesConviene = equipo.aQuienesLesEsUtilCambiarDeEspada(llaveDelReino)
+
+		assert.equals(aQuienesLesConviene, [mickey])
+	}
+
+	test "Al legar una llave espada a un equipo, el miembro más beneficiado se la queda" {
+		const equipo = new Equipo(miembros = [sora, mickey, riku])
+		
+		equipo.legarLlaveEspada(brisaDescarada)
+		assert.equals(mickey.espada(), brisaDescarada)
+	}
+
+	test "Si a nadie le conviene equipar cierta espada al legarla, no pasa nada" {
+		const equipo = new Equipo(miembros = [sora, riku])
+		
+		equipo.legarLlaveEspada(exploradorEstelar)
+		assert.notEquals(sora.espada(), exploradorEstelar)
+		assert.notEquals(riku.espada(), exploradorEstelar)
 	}
 }

@@ -1,3 +1,5 @@
+// Parte 1 --------------------------------------------------------------------------------------
+
 class AtaqueFisico {
     const potencia
     method danio(enemigo) = 1.max(enemigo.calcularDanioFisico(potencia))
@@ -56,6 +58,8 @@ object luz {
 }
 
 
+// Parte 2 --------------------------------------------------------------------------------------
+
 
 class Heroe {
     const fuerza
@@ -63,6 +67,7 @@ class Heroe {
     var espada
 
     method pm() = pm
+    method espada() = espada
 
     method atacar(enemigo) {
         const ataque = new AtaqueFisico(potencia = fuerza + espada.poderFisico())
@@ -87,6 +92,10 @@ class Heroe {
     method equiparLlaveEspada(nuevaEspada) {
         espada = nuevaEspada
     }
+
+    method leEsUtilCambiarDeEspada(nuevaEspada) = self.variacionDePoderFisicoDeEspadaRespectoAOtra(nuevaEspada) > 0
+
+    method variacionDePoderFisicoDeEspadaRespectoAOtra(otraEspada) = otraEspada.poderFisico() - espada.poderFisico()
 }
 
 class LlaveEspada {
@@ -117,3 +126,30 @@ const riku = new Heroe(fuerza = 15, pm = 4, espada = caminoAlAlba)
 const piro = new Hechizo(elemento = fuego, poderBase = 5)
 const chispa = new Hechizo(elemento = luz, poderBase = 1)
 const ragnarok = new Hechizo(elemento = luz, poderBase = 30)
+
+
+
+// Parte 3 --------------------------------------------------------------------------------------
+
+
+class Equipo {
+    const miembros = []
+
+    method necesitanFrenar() = miembros.any{ miembro => miembro.pm() == 0 }
+
+    method emboscar(enemigo) {
+        miembros.forEach{
+            miembro =>
+            miembro.atacar(enemigo)
+        }
+    }
+
+    method aQuienesLesEsUtilCambiarDeEspada(nuevaEspada) = miembros.filter{ miembro => miembro.leEsUtilCambiarDeEspada(nuevaEspada) }
+
+    method legarLlaveEspada(nuevaEspada) {
+        const masBeneficiado = miembros.max{miembro => miembro.variacionDePoderFisicoDeEspadaRespectoAOtra(nuevaEspada)}
+        if (masBeneficiado.leEsUtilCambiarDeEspada(nuevaEspada)) {
+            masBeneficiado.equiparLlaveEspada(nuevaEspada)
+        }
+    }
+}
