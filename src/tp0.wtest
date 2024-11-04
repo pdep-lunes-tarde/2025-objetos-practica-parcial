@@ -129,3 +129,17 @@ describe "Equipos" {
 		assert.notEquals(riku.espada(), exploradorEstelar)
 	}
 }
+
+
+describe "Otros héroes" {
+	test "Ventus ataca físicamente usando el poder mágico de su espada" {
+		ventus.atacar(nocturnoRojo)
+		assert.equals(nocturnoRojo.pv(), 71)
+	}
+
+	test "Ventus lanza hechizos usando el poder físico de su espada" {
+		ventus.lanzarHechizo(chispa, nocturnoRojo)
+		assert.equals(nocturnoRojo.pv(), 75)
+		assert.equals(ventus.pm(), 6)
+	}
+}

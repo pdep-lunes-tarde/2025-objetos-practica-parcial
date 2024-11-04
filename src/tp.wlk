@@ -70,18 +70,20 @@ class Heroe {
     method espada() = espada
 
     method atacar(enemigo) {
-        const ataque = new AtaqueFisico(potencia = fuerza + espada.poderFisico())
+        const ataque = new AtaqueFisico(potencia = self.potenciaDeAtaqueFisico())
         enemigo.recibirAtaque(ataque)
     }
 
     method lanzarHechizo(hechizo, enemigo) {
         if (self.puedeLanzarHechizo(hechizo)) {    
-            const potenciaAtaque = hechizo.poderBase() * espada.poderMagico()
-            const ataque = new AtaqueMagico(potencia = potenciaAtaque, elemento = hechizo.elemento())
+            const ataque = new AtaqueMagico(potencia = self.potenciaDeAtaqueMagico(hechizo), elemento = hechizo.elemento())
             enemigo.recibirAtaque(ataque)
             pm = 0.max(pm - hechizo.poderBase())
         }
     }
+
+    method potenciaDeAtaqueFisico() = fuerza + espada.poderFisico()
+    method potenciaDeAtaqueMagico(hechizo) = hechizo.poderBase() * espada.poderMagico()
 
     method puedeLanzarHechizo(hechizo) = pm >= hechizo.poderBase()
 
@@ -152,4 +154,15 @@ class Equipo {
             masBeneficiado.equiparLlaveEspada(nuevaEspada)
         }
     }
+}
+
+
+
+
+// Parte 4 --------------------------------------------------------------------------------------
+
+
+object ventus inherits Heroe(fuerza = 8, pm = 7, espada = brisaDescarada) {
+    override method potenciaDeAtaqueFisico() = fuerza + espada.poderMagico()
+    override method potenciaDeAtaqueMagico(hechizo) = hechizo.poderBase() * espada.poderFisico()
 }
