@@ -2,6 +2,7 @@ import tp.*
 
 const umbrio = new Incorporeo(defensa = 10, pv = 50, elemento = oscuridad)
 const nocturnoRojo = new Sincorazon(pv = 80, elemento = fuego)
+const rapsodiaAzul = new Sincorazon(pv = 80, elemento = hielo)
 
 describe "Enemigos y ataques" {
 	test "Un incorpóreo recibe daño físico igual a la diferencia entre la potencia del ataque y la defensa del enemigo" {
@@ -39,5 +40,32 @@ describe "Enemigos y ataques" {
 		const ataqueMagico = new AtaqueMagico(potencia = 10, elemento = luz)
 		umbrio.recibirAtaque(ataqueMagico)
 		assert.equals(umbrio.pv(), 30)
+	}
+}
+
+
+describe "Héroes" {
+  	test "Cuando un héroe ataca a un enemigo, le hace un ataque físico cuya potencia es la fuerza del héroe + el poder de su espada" {
+		sora.atacar(umbrio)
+		assert.equals(umbrio.pv(), 47)
+  	}
+
+	test "Cuando un héroe lanza un hechizo a un enemigo, le hace un ataque mágico cuya potencia es el poder base del hechizo * el poder mágico de su espada y gasta maná igual al poder base" {
+		sora.lanzarHechizo(piro, rapsodiaAzul)
+		assert.equals(rapsodiaAzul.pv(), 30)
+		assert.equals(sora.pm(), 3)
+	}
+
+	test "Si un héroe no tiene suficiente maná, no puede lanzar un hechizo (y no gasta PM)" {
+		mickey.lanzarHechizo(ragnarok, umbrio)
+		assert.equals(umbrio.pv(), 50)
+		assert.equals(mickey.pm(), 13)
+	}
+
+	test "Al cambiar de espada, los héroes causan daño distinto" {
+		const examinadora = new LlaveEspada(poderFisico = 1, poderMagico = 10)
+		sora.espada(examinadora)
+		sora.lanzarHechizo(piro, rapsodiaAzul)
+		assert.equals(rapsodiaAzul.pv(), 0)
 	}
 }
