@@ -61,7 +61,7 @@ describe "Héroes" {
 	}
 
 	test "Si un héroe no tiene suficiente maná, no puede lanzar un hechizo (y no gasta PM)" {
-		mickey.lanzarHechizo(ragnarok, umbrio)
+		assert.throwsExceptionWithMessage("El héroe no tiene suficientes PM para lanzar este hechizo", { mickey.lanzarHechizo(ragnarok, umbrio) })
 		assert.equals(umbrio.pv(), 50)
 		assert.equals(mickey.pm(), 13)
 	}
@@ -141,5 +141,54 @@ describe "Otros héroes" {
 		ventus.lanzarHechizo(chispa, nocturnoRojo)
 		assert.equals(nocturnoRojo.pv(), 75)
 		assert.equals(ventus.pm(), 6)
+	}
+
+	test "Luego de atacar físicamente 5 veces seguidas, Roxas pasa a modo valiente y hace un 50% más de daño físico" {
+		5.times{
+			i =>
+			roxas.atacar(umbrio)
+		}
+		assert.equals(umbrio.pv(), 45)
+		assert.equals(roxas.modo(), valiente)
+
+		roxas.atacar(umbrio)
+		assert.equals(umbrio.pv(), 43)
+	}
+
+	test "Luego de lanzar 5 hechizos seguidos, Roxas pasa a modo sabio y hace un 200% más de daño mágico" {
+		5.times{
+			i =>
+			roxas.lanzarHechizo(chispa, nocturnoRojo)
+		}
+		assert.equals(nocturnoRojo.pv(), 55)
+		assert.equals(roxas.modo(), sabio)
+
+		roxas.lanzarHechizo(chispa, nocturnoRojo)
+		assert.equals(nocturnoRojo.pv(), 40)
+	}
+
+	test "Los 5 hechizos seguidos de Roxas para pasar a modo sabio deben haber sido lanzados efectivamente" {
+		4.times{
+			i =>
+			roxas.lanzarHechizo(chispa, nocturnoRojo)
+		}
+		try {
+			roxas.lanzarHechizo(ragnarok, nocturnoRojo) // No debería tener PM suficientes para lanzar Ragnarok
+		} catch e: HechizoException
+		
+		assert.equals(roxas.modo(), tranquilo)
+		
+		roxas.lanzarHechizo(chispa, nocturnoRojo)
+		assert.equals(roxas.modo(), sabio)
+	}
+
+	test "Atacar de una forma reinicia la cuenta del otro tipo de ataque de Roxas" {
+		4.times{
+			i =>
+			roxas.lanzarHechizo(chispa, nocturnoRojo)
+		}
+		roxas.atacar(nocturnoRojo)
+		roxas.lanzarHechizo(chispa, nocturnoRojo)
+		assert.equals(roxas.modo(), tranquilo)
 	}
 }

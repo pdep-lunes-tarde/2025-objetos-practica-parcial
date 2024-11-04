@@ -60,6 +60,7 @@ object luz {
 
 // Parte 2 --------------------------------------------------------------------------------------
 
+class HechizoException inherits DomainException {}
 
 class Heroe {
     const fuerza
@@ -75,11 +76,12 @@ class Heroe {
     }
 
     method lanzarHechizo(hechizo, enemigo) {
-        if (self.puedeLanzarHechizo(hechizo)) {    
-            const ataque = new AtaqueMagico(potencia = self.potenciaDeAtaqueMagico(hechizo), elemento = hechizo.elemento())
-            enemigo.recibirAtaque(ataque)
-            pm = 0.max(pm - hechizo.poderBase())
+        if (not self.puedeLanzarHechizo(hechizo)) {
+            throw new HechizoException(message = "El héroe no tiene suficientes PM para lanzar este hechizo")
         }
+        const ataque = new AtaqueMagico(potencia = self.potenciaDeAtaqueMagico(hechizo), elemento = hechizo.elemento())
+        enemigo.recibirAtaque(ataque)
+        pm = 0.max(pm - hechizo.poderBase())
     }
 
     method potenciaDeAtaqueFisico() = fuerza + espada.poderFisico()
@@ -165,4 +167,46 @@ class Equipo {
 object ventus inherits Heroe(fuerza = 8, pm = 7, espada = brisaDescarada) {
     override method potenciaDeAtaqueFisico() = fuerza + espada.poderMagico()
     override method potenciaDeAtaqueMagico(hechizo) = hechizo.poderBase() * espada.poderFisico()
+}
+
+object roxas inherits Heroe(fuerza = 5, pm = 20, espada = llaveDelReino) {
+    var modo = tranquilo
+    var fisicosConsecutivos = 0
+    var magicosConsecutivos = 0
+
+    method modo() = modo
+
+    override method potenciaDeAtaqueFisico() = super() + super() * modo.adicionalFisico()
+    override method potenciaDeAtaqueMagico(hechizo) = super(hechizo) + super(hechizo) * modo.adicionalMagico()
+
+    override method atacar(enemigo) {
+        super(enemigo)
+        fisicosConsecutivos += 1
+        magicosConsecutivos = 0
+        if (fisicosConsecutivos == 5) {
+            modo = valiente
+        }
+    }
+
+    override method lanzarHechizo(hechizo, enemigo) {
+        super(hechizo, enemigo)
+        magicosConsecutivos += 1
+        fisicosConsecutivos = 0
+        if (magicosConsecutivos == 5) {
+            modo = sabio
+        }
+    }
+ }
+
+object tranquilo {
+    method adicionalFisico() = 0
+    method adicionalMagico() = 0
+}
+object valiente {
+    method adicionalFisico() = 0.5
+    method adicionalMagico() = -0.2
+}
+object sabio {
+    method adicionalFisico() = -0.7
+    method adicionalMagico() = 2
 }
