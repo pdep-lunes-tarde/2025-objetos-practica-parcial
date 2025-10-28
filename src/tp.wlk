@@ -21,7 +21,6 @@ class Enemigo {
     const elemento
 
     method pv() = pv
-    method elemento() = elemento
 
     method esDeElemento(unElemento) {
         return elemento == unElemento
