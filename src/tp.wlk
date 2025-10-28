@@ -1,7 +1,6 @@
-// Parte 1 --------------------------------------------------------------------------------------
-
 class AtaqueFisico {
     const potencia
+
     method danio(enemigo) = 1.max(enemigo.calcularDanioFisico(potencia))
 }
 
@@ -10,8 +9,8 @@ class AtaqueMagico {
     const elemento
 
     method danio(enemigo) {
-        if (enemigo.elemento() == elemento) return 0
-        if (enemigo.elemento().debilidad() == elemento) return potencia * 2
+        if (enemigo.esDeElemento(elemento)) return 0
+        if (enemigo.esDebilContra(elemento)) return potencia * 2
         return potencia
     }
 }
@@ -23,6 +22,14 @@ class Enemigo {
 
     method pv() = pv
     method elemento() = elemento
+
+    method esDeElemento(unElemento) {
+        return elemento == unElemento
+    }
+
+    method esDebilContra(unElemento) {
+        return elemento.esDebilContra(unElemento)
+    }
 
     method recibirAtaque(ataque) {
         const danio = ataque.danio(self)
@@ -43,22 +50,22 @@ class Sincorazon inherits Enemigo {
 }
 
 
-
-object fuego {
-    method debilidad() = hielo
+class Elemento {
+    method esDebilContra(unElemento) = self.debilidad() == unElemento
+    method debilidad()
 }
-object hielo {
-    method debilidad() = fuego
+object fuego inherits Elemento {
+    override method debilidad() = hielo
 }
-object oscuridad {
-    method debilidad() = luz
+object hielo inherits Elemento {
+    override method debilidad() = fuego
 }
-object luz {
-    method debilidad() = oscuridad
+object oscuridad inherits Elemento {
+    override method debilidad() = luz
 }
-
-
-// Parte 2 --------------------------------------------------------------------------------------
+object luz inherits Elemento {
+    override method debilidad() = oscuridad
+}
 
 class HechizoException inherits DomainException {}
 
@@ -131,21 +138,13 @@ const piro = new Hechizo(elemento = fuego, poderBase = 5)
 const chispa = new Hechizo(elemento = luz, poderBase = 1)
 const ragnarok = new Hechizo(elemento = luz, poderBase = 30)
 
-
-
-// Parte 3 --------------------------------------------------------------------------------------
-
-
 class Equipo {
     const miembros = []
 
     method necesitanFrenar() = miembros.any{ miembro => miembro.pm() == 0 }
 
     method emboscar(enemigo) {
-        miembros.forEach{
-            miembro =>
-            miembro.atacar(enemigo)
-        }
+        miembros.forEach{ miembro => miembro.atacar(enemigo) }
     }
 
     method aQuienesLesEsUtilCambiarDeEspada(nuevaEspada) = miembros.filter{ miembro => miembro.leEsUtilCambiarDeEspada(nuevaEspada) }
@@ -176,8 +175,8 @@ object roxas inherits Heroe(fuerza = 5, pm = 20, espada = llaveDelReino) {
 
     method modo() = modo
 
-    override method potenciaDeAtaqueFisico() = super() + super() * modo.adicionalFisico()
-    override method potenciaDeAtaqueMagico(hechizo) = super(hechizo) + super(hechizo) * modo.adicionalMagico()
+    override method potenciaDeAtaqueFisico() = super() * (1 + modo.adicionalFisico())
+    override method potenciaDeAtaqueMagico(hechizo) = super(hechizo) * (1 + modo.adicionalMagico())
 
     override method atacar(enemigo) {
         super(enemigo)
@@ -192,7 +191,7 @@ object roxas inherits Heroe(fuerza = 5, pm = 20, espada = llaveDelReino) {
         super(hechizo, enemigo)
         magicosConsecutivos += 1
         fisicosConsecutivos = 0
-        if (magicosConsecutivos == 5) {
+        if (magicosConsecutivos >= 5) {
             modo = sabio
         }
     }
